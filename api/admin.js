@@ -1,4 +1,4 @@
-const ADMIN_PASS     = process.env.ADMIN_PASS || 'itachi123';
+const ADMIN_PASS     = process.env.ADMIN_PASS || 'Itachi';
 const EDGE_CONFIG_ID = process.env.EDGE_CONFIG_ID;
 const VERCEL_TOKEN   = process.env.VERCEL_TOKEN;
 
