@@ -20,7 +20,7 @@ const FILTROS = {
 
 async function getCuentas() {
   try {
-    const rows = await sql`SELECT correo, servicio FROM cuentas`;
+    const rows = await sql`SELECT correo, servicio FROM cuentas_itachi`;
     return Object.fromEntries(rows.map(r => [r.correo, { servicio: r.servicio }]));
   } catch (e) { return {}; }
 }
