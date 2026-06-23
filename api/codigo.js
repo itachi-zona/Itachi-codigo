@@ -1,12 +1,12 @@
 const Imap = require('imap');
+const { neon } = require('@neondatabase/serverless');
+const sql = neon(process.env.DATABASE_URL);
 const { simpleParser } = require('mailparser');
 
 const CUENTAS_ICLOUD = [
   { user: process.env.ICLOUD_USER,  pass: process.env.ICLOUD_PASS },
   { user: process.env.ICLOUD_USER2, pass: process.env.ICLOUD_PASS2 },
 ];
-const EDGE_CONFIG_ID  = process.env.EDGE_CONFIG_ID;
-const VERCEL_TOKEN    = process.env.VERCEL_TOKEN;
 const MINUTOS_VALIDOS = 5;
 
 const FILTROS = {
@@ -20,16 +20,9 @@ const FILTROS = {
 
 async function getCuentas() {
   try {
-    const url = `https://api.vercel.com/v1/edge-config/${EDGE_CONFIG_ID}/item/cuentas`;
-    const res = await fetch(url, {
-      headers: { 'Authorization': `Bearer ${VERCEL_TOKEN}` }
-    });
-    if (!res.ok) return {};
-    const data = await res.json();
-    return data.value || data || {};
-  } catch (e) {
-    return {};
-  }
+    const rows = await sql`SELECT correo, servicio FROM cuentas`;
+    return Object.fromEntries(rows.map(r => [r.correo, { servicio: r.servicio }]));
+  } catch (e) { return {}; }
 }
 
 function buscarEmailsImap(palabrasClave, aliasCliente, imapUser, imapPass) {
