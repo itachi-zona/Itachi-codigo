@@ -1,10 +1,10 @@
 const { neon } = require('@neondatabase/serverless');
-const ADMIN_PASS = process.env.ADMIN_PASS || 'itachi';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'itachi123';
 const sql = neon(process.env.DATABASE_URL);
 
 async function getCuentas() {
   try {
-    const rows = await sql`SELECT correo, servicio, fecha FROM cuentas ORDER BY fecha DESC`;
+    const rows = await sql`SELECT correo, servicio, fecha FROM cuentas_itachi ORDER BY fecha DESC`;
     return Object.fromEntries(rows.map(r => [r.correo, { servicio: r.servicio, fecha: r.fecha }]));
   } catch (e) { return {}; }
 }
@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
     const { correo, servicio } = await parseBody(req);
     if (!correo || !servicio) return res.status(400).json({ error: 'Faltan datos.' });
     await sql`
-      INSERT INTO cuentas (correo, servicio)
+      INSERT INTO cuentas_itachi (correo, servicio)
       VALUES (${correo.toLowerCase().trim()}, ${servicio.toLowerCase().trim()})
       ON CONFLICT (correo) DO UPDATE SET servicio = EXCLUDED.servicio
     `;
@@ -47,7 +47,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'DELETE') {
     const { correo } = await parseBody(req);
     if (!correo) return res.status(400).json({ error: 'Falta el correo.' });
-    await sql`DELETE FROM cuentas WHERE correo = ${correo.toLowerCase().trim()}`;
+    await sql`DELETE FROM cuentas_itachi WHERE correo = ${correo.toLowerCase().trim()}`;
     const cuentas = await getCuentas();
     return res.json({ ok: true, cuentas });
   }
